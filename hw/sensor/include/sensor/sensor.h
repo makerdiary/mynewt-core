@@ -21,9 +21,7 @@
 #define __SENSOR_H__
 
 #include <string.h>
-#include "os/os.h"
-#include "os/os_dev.h"
-#include "syscfg/syscfg.h"
+#include "os/mynewt.h"
 
 #if MYNEWT_VAL(SENSOR_OIC)
 #include "oic/oc_ri.h"
@@ -273,6 +271,16 @@ struct sensor_notifier {
      * contained within the sensor object.
      */
     SLIST_ENTRY(sensor_notifier) sn_next;
+};
+
+/**
+ * Context for sensor read events
+ */
+struct sensor_read_ev_ctx {
+    /* The sensor for which the ev cb should be called */
+    struct sensor *srec_sensor;
+    /* The sensor type */
+    sensor_type_t srec_type;
 };
 
 /**

@@ -17,12 +17,9 @@
  * under the License.
  */
 
-#include "os/os.h"
-#include "os/os_trace_api.h"
-#include "os/queue.h"
-#include "os_priv.h"
-
 #include <assert.h>
+#include "os/mynewt.h"
+#include "os_priv.h"
 
 struct os_task_list g_os_run_list = TAILQ_HEAD_INITIALIZER(g_os_run_list);
 struct os_task_list g_os_sleep_list = TAILQ_HEAD_INITIALIZER(g_os_sleep_list);
@@ -92,15 +89,6 @@ os_sched_ctx_sw_hook(struct os_task *next_t)
     g_os_last_ctx_sw_time = g_os_time;
 }
 
-/**
- * os sched get current task
- *
- * Returns the currently running task. Note that this task may or may not be
- * the highest priority task ready to run.
- *
- *
- * @return struct os_task*
- */
 struct os_task *
 os_sched_get_current_task(void)
 {

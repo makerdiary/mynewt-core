@@ -21,11 +21,8 @@
 #include <stddef.h>
 #include <string.h>
 #include <assert.h>
-#include <sysinit/sysinit.h>
+#include "os/mynewt.h"
 #include <nrf52.h>
-#include "os/os_cputime.h"
-#include "syscfg/syscfg.h"
-#include "sysflash/sysflash.h"
 #include "flash_map/flash_map.h"
 #include "hal/hal_bsp.h"
 #include "hal/hal_system.h"
@@ -43,7 +40,6 @@
 #if MYNEWT_VAL(UART_1)
 #include "uart_bitbang/uart_bitbang.h"
 #endif
-#include "os/os_dev.h"
 #include "bsp.h"
 #if MYNEWT_VAL(ADC_0)
 #include <adc_nrf52/adc_nrf52.h>
@@ -85,18 +81,27 @@ static const struct uart_bitbang_conf os_bsp_uart1_cfg = {
  * and is handled outside the SPI routines.
  */
 static const struct nrf52_hal_spi_cfg os_bsp_spi0m_cfg = {
-    .sck_pin      = 23,
-    .mosi_pin     = 24,
-    .miso_pin     = 25,
+    .sck_pin      = MYNEWT_VAL(SPI_0_MASTER_PIN_SCK),
+    .mosi_pin     = MYNEWT_VAL(SPI_0_MASTER_PIN_MOSI),
+    .miso_pin     = MYNEWT_VAL(SPI_0_MASTER_PIN_MISO),
 };
 #endif
 
 #if MYNEWT_VAL(SPI_0_SLAVE)
 static const struct nrf52_hal_spi_cfg os_bsp_spi0s_cfg = {
-    .sck_pin      = 23,
-    .mosi_pin     = 24,
-    .miso_pin     = 25,
-    .ss_pin       = 22,
+    .sck_pin      = MYNEWT_VAL(SPI_0_SLAVE_PIN_SCK),
+    .mosi_pin     = MYNEWT_VAL(SPI_0_SLAVE_PIN_MOSI),
+    .miso_pin     = MYNEWT_VAL(SPI_0_SLAVE_PIN_MISO),
+    .ss_pin       = MYNEWT_VAL(SPI_0_SLAVE_PIN_SS),
+};
+#endif
+
+#if MYNEWT_VAL(ADC_0)
+static struct adc_dev os_bsp_adc0;
+static struct nrf52_adc_dev_cfg os_bsp_adc0_config = {
+    .saadc_cfg.resolution         = MYNEWT_VAL(ADC_0_RESOLUTION),
+    .saadc_cfg.oversample         = MYNEWT_VAL(ADC_0_OVERSAMPLE),
+    .saadc_cfg.interrupt_priority = MYNEWT_VAL(ADC_0_INTERRUPT_PRIORITY),
 };
 #endif
 
@@ -118,9 +123,9 @@ static struct pwm_dev os_bsp_spwm;
 
 #if MYNEWT_VAL(I2C_0)
 static const struct nrf52_hal_i2c_cfg hal_i2c_cfg = {
-    .scl_pin = 15,
-    .sda_pin = 14,
-    .i2c_frequency = 400    /* 400 kHz */
+    .scl_pin = MYNEWT_VAL(I2C_0_PIN_SCL),
+    .sda_pin = MYNEWT_VAL(I2C_0_PIN_SDA),
+    .i2c_frequency = MYNEWT_VAL(I2C_0_FREQ_KHZ),
 };
 
 #if MYNEWT_VAL(LIS2DH12_ONB)

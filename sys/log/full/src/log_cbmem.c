@@ -16,7 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-#include <os/os.h>
+
+#include "os/mynewt.h"
 #include <cbmem/cbmem.h>
 #include "log/log.h"
 
@@ -127,5 +128,4 @@ const struct log_handler log_cbmem_handler = {
     .log_append = log_cbmem_append,
     .log_walk = log_cbmem_walk,
     .log_flush = log_cbmem_flush,
-    .log_rtr_erase = NULL,
 };

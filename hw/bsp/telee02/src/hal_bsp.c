@@ -20,10 +20,8 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <assert.h>
+#include "os/mynewt.h"
 #include <nrf52.h>
-#include "os/os_cputime.h"
-#include "syscfg/syscfg.h"
-#include "sysflash/sysflash.h"
 #include "flash_map/flash_map.h"
 #include "hal/hal_bsp.h"
 #include "hal/hal_system.h"
@@ -42,11 +40,9 @@
 #if MYNEWT_VAL(UART_1)
 #include "uart_bitbang/uart_bitbang.h"
 #endif
-#include "os/os_dev.h"
 #include "bsp.h"
 #if MYNEWT_VAL(ADC_0)
 #include <adc_nrf52/adc_nrf52.h>
-#include <nrfx_saadc.h>
 #endif
 #if MYNEWT_VAL(PWM_0) || MYNEWT_VAL(PWM_1) || MYNEWT_VAL(PWM_2)
 #include <pwm_nrf52/pwm_nrf52.h>
@@ -80,18 +76,18 @@ static const struct uart_bitbang_conf os_bsp_uart1_cfg = {
  * and is handled outside the SPI routines.
  */
 static const struct nrf52_hal_spi_cfg os_bsp_spi0m_cfg = {
-    .sck_pin      = 25,
-    .mosi_pin     = 23,
-    .miso_pin     = 24,
+    .sck_pin      = MYNEWT_VAL(SPI_0_MASTER_PIN_SCK),
+    .mosi_pin     = MYNEWT_VAL(SPI_0_MASTER_PIN_MOSI),
+    .miso_pin     = MYNEWT_VAL(SPI_0_MASTER_PIN_MISO),
 };
 #endif
 
 #if MYNEWT_VAL(ADC_0)
 static struct adc_dev os_bsp_adc0;
-static nrfx_saadc_config_t os_bsp_adc0_config = {
-    .resolution         = MYNEWT_VAL(ADC_0_RESOLUTION),
-    .oversample         = MYNEWT_VAL(ADC_0_OVERSAMPLE),
-    .interrupt_priority = MYNEWT_VAL(ADC_0_INTERRUPT_PRIORITY),
+static struct nrf52_adc_dev_cfg os_bsp_adc0_config = {
+    .saadc_cfg.resolution         = MYNEWT_VAL(ADC_0_RESOLUTION),
+    .saadc_cfg.oversample         = MYNEWT_VAL(ADC_0_OVERSAMPLE),
+    .saadc_cfg.interrupt_priority = MYNEWT_VAL(ADC_0_INTERRUPT_PRIORITY),
 };
 #endif
 

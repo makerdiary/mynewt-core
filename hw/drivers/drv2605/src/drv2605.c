@@ -21,9 +21,7 @@
 #include <errno.h>
 #include <assert.h>
 
-#include "defs/error.h"
-#include "os/os.h"
-#include "sysinit/sysinit.h"
+#include "os/mynewt.h"
 #include "hal/hal_i2c.h"
 #include "hal/hal_gpio.h"
 #include "drv2605/drv2605.h"
@@ -129,7 +127,9 @@ drv2605_writelen(struct sensor_itf *itf, uint8_t reg, uint8_t *buffer,
     rc = hal_i2c_master_write(itf->si_num, &data_struct, OS_TICKS_PER_SEC / 10, 1);
     if (rc) {
         DRV2605_ERR("I2C access failed at address 0x%02X\n", data_struct.address);
+#if MYNEWT_VAL(DRV2605_STATS)
         STATS_INC(g_drv2605stats, errors);
+#endif
         goto err;
     }
 

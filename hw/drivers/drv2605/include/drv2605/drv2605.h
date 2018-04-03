@@ -20,8 +20,7 @@
 #ifndef __DRV2605_H__
 #define __DRV2605_H__
 
-#include <os/os.h>
-#include "os/os_dev.h"
+#include "os/mynewt.h"
 #include "sensor/sensor.h"
 
 #ifdef __cplusplus
@@ -80,7 +79,8 @@ drv2605_config(struct drv2605 *drv2605, struct drv2605_cfg *cfg);
 
 
 #if MYNEWT_VAL(DRV2605_CLI)
-int drv2605_shell_init(void);
+int
+drv2605_shell_init(void);
 #endif
 
 

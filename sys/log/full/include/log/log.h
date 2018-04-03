@@ -19,11 +19,9 @@
 #ifndef __SYS_LOG_FULL_H__
 #define __SYS_LOG_FULL_H__
 
-#include "syscfg/syscfg.h"
+#include "os/mynewt.h"
 #include "log/ignore.h"
 #include "cbmem/cbmem.h"
-
-#include <os/queue.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -70,11 +68,6 @@ typedef int (*lh_append_func_t)(struct log *, void *buf, int len);
 typedef int (*lh_walk_func_t)(struct log *,
         log_walk_func_t walk_func, struct log_offset *log_offset);
 typedef int (*lh_flush_func_t)(struct log *);
-/*
- * This function pointer points to a function that restores the numebr
- * of entries that are specified while erasing
- */
-typedef int (*lh_rtr_erase_func_t)(struct log *, void *arg);
 
 #define LOG_TYPE_STREAM  (0)
 #define LOG_TYPE_MEMORY  (1)
@@ -86,7 +79,6 @@ struct log_handler {
     lh_append_func_t log_append;
     lh_walk_func_t log_walk;
     lh_flush_func_t log_flush;
-    lh_rtr_erase_func_t log_rtr_erase;
 };
 
 struct log_entry_hdr {
@@ -221,7 +213,6 @@ int log_read(struct log *log, void *dptr, void *buf, uint16_t off,
 int log_walk(struct log *log, log_walk_func_t walk_func,
         struct log_offset *log_offset);
 int log_flush(struct log *log);
-int log_rtr_erase(struct log *log, void *arg);
 
 /* Handler exports */
 #if MYNEWT_VAL(LOG_CONSOLE)
